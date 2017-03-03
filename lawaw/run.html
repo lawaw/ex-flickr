@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<script src="http://maps.google.com/maps/api/js"></script>
+<script src="exercise.js"></script>
+<script>
+
+var map;
+var markers = [];
+
+function getFlickrData(){
+
+	var url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=4f145bca7bc87d6287f1caab430a29f9';
+
+	var tags = '&per_page=250';
+	tags += '&bbox=-71.097620,42.354970,-71.084316,42.363310';
+	tags += '&format=json';
+	tags += '&nojsoncallback=1';
+	tags += '&tags=mit';
+	tags += '&accuracy=6';
+	tags += '&extras=description,+date_taken,date_upload,owner_name,geo,url_s';
+	url = url + tags;
+
+	// make xhr request
+	var xhReq = new XMLHttpRequest();
+	xhReq.open('GET', url, false);
+	xhReq.send(null);
+	var serverResponse = xhReq.responseText;
+
+	// create object from response
+	var data = JSON.parse(serverResponse);
+	return data;
+}
+
+
+function init(){
+	var latlng = new google.maps.LatLng(42.359074, -71.091761);
+	var myOptions = {
+		zoom : 16,
+		center : latlng,
+		mapTypeId : google.maps.MapTypeId.ROADMAP
+	};
+  	map = new google.maps.Map(document.getElementById('map'), myOptions);
+
+  	// get data, add markers and photos to page
+	var data = getFlickrData();
+  	exercise.addMarkers(data);
+  	exercise.addPhotos(data);
+}
+
+window.onload = init;
+
+</script>
+<div id="map" style="width:1024px; height:768px"></div>
+<div id="images"></div>
+</html>
